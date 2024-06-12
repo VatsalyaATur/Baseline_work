@@ -34,12 +34,11 @@ logic           status;      /// 0: Read 1: Write
 logic   [31:0]  clk_count;   ///// clk counter in between start to stop
 
 
-assign p_slverr = 0;
-assign p_ready  = 0;
+assign p_slverr = 1'b0;
+assign p_ready  = 1'b1;
 
 
-always_ff @(posedge clk) begin 
-    // if (! error) begin
+always_ff @(posedge p_clk) begin 
         if ( clk_count == 32'h FFFF_FFFF ) begin 
              clk_count <= 0;
              overflow  <= 1'b1;
@@ -48,32 +47,31 @@ always_ff @(posedge clk) begin
            clk_count <= clk_count +1;
            overflow  <= 1'b0;
         end
-     //end
-   //   else begin   /// error is 1
-   //      clk_count  <= clk_count;
-   //      overflow   <= overflow;
-   //   end
 end            
         
-always_ff @(posedge clk) begin
+always_ff @(posedge p_clk) begin
    clk_count  <= (start) ? clk_count + 1 : (stop) ? clk_count : 32'd0;
 
    if (~prst_n) begin
      // error      <= 0;
-      status     <= 1'b0;
+      status     <= 1'b1;
    end
    else begin 
     //  if (p_sel && p_en && p_write && p_ready) begin // Write operation
       if (p_sel && p_en ) begin  
          if ( p_write ) begin  /// Write operation
+            status     <= 1'b1;
             case (p_addr)
                32'h0   : start <= p_wrdata[0];
                32'h4   : stop  <= p_wrdata[0];
                default : 
             endcase
          end
-         else begin
+         else begin     /// Read operations
+            status     <= 1'b0;
             case (p_addr)
+               32'h8   : p_rdata  <= status;
+               32'h8   : p_rdata  <= status;
                32'h8   : p_rdata  <= status;
                default :   
             endcase
