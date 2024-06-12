@@ -64,16 +64,16 @@ always_ff @(posedge p_clk) begin
             case (p_addr)
                32'h0   : start <= p_wrdata[0];
                32'h4   : stop  <= p_wrdata[0];
-               default : 
+               default : begin end 
             endcase
          end
          else begin     /// Read operations
             status     <= 1'b0;
             case (p_addr)
                32'h8   : p_rdata  <= status;
-               32'h8   : p_rdata  <= status;
-               32'h8   : p_rdata  <= status;
-               default :   
+               32'hC   : p_rdata  <= clk_count;
+               32'h10  : p_rdata  <= overflow;
+               default : begin end  
             endcase
          end
       end      
