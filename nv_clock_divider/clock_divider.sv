@@ -27,6 +27,7 @@ module clock_divider(
        2'h0 :  clk_out = count[0];     /// clk/2
        2'h1 :  clk_out = count[1];     /// clk/4
        2'h2 :  clk_out = count[2];     /// clk/8
+       2'h3 :  clk_out = count[3];     /// clk/16
        default : clk_out = 'd0;   
     endcase    
 end
